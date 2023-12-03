@@ -1,5 +1,15 @@
-﻿using AOC23Console.Day01;
+﻿using AOC23Console;
+using AOC23Console.Day01;
+using AOC23Console.Day02;
 
-Console.WriteLine($"""
-    Day 01 | Part 1: {Day01.Part1_SumOfCalibration(File.ReadAllText("Day01/input.txt"))}
-    """);
+foreach (var day in new IDay[] {
+    new Day01(),
+    new Day02(),
+})
+{
+    Console.WriteLine($"""
+        {day.Name}
+          Part One: {day.Part1(File.ReadAllText($"{day.GetType().Name}/input.txt"))}
+          Part Two: {day.Part2(File.ReadAllText($"{day.GetType().Name}/input.txt"))}
+        """);
+}
