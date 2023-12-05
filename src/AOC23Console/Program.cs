@@ -26,7 +26,7 @@ foreach (var day in new IDay[] {
     Console.WriteLine();
 }
 
-(int, long) WithTimer(Func<string, int> action, string input)
+static (int, long) WithTimer(Func<string, int> action, string input)
 {
     var sw = new Stopwatch();
     sw.Start();

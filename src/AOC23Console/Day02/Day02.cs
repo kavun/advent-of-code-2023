@@ -9,27 +9,32 @@ namespace AOC23Console.Day02
         public record Game(int Id, int Red, int Green, int Blue)
         {
             public bool IsPossible => Red <= 12 && Green <= 13 && Blue <= 14;
+            public int Power => Red * Green * Blue;
         }
 
         public int Part1(string input)
         {
             return input.Split(Environment.NewLine)
-                .Select(line =>
-                {
-                    var id = int.Parse(GameIdRegex().Match(line).Groups[1].Value);
-                    var red = RedCubesRegex().Matches(line).Max(m => int.Parse(m.Groups[1].Value));
-                    var green = GreenCubesRegex().Matches(line).Max(m => int.Parse(m.Groups[1].Value));
-                    var blue = BlueCubesRegex().Matches(line).Max(m => int.Parse(m.Groups[1].Value));
-                    var g = new Game(Id: id, Red: red, Green: green, Blue: blue);
-                    return g;
-                })
+                .Select(GetGame)
                 .Where(g => g.IsPossible)
                 .Sum(g => g.Id);
         }
 
+        private static Game GetGame(string line)
+        {
+            var id = int.Parse(GameIdRegex().Match(line).Groups[1].Value);
+            var red = RedCubesRegex().Matches(line).Max(m => int.Parse(m.Groups[1].Value));
+            var green = GreenCubesRegex().Matches(line).Max(m => int.Parse(m.Groups[1].Value));
+            var blue = BlueCubesRegex().Matches(line).Max(m => int.Parse(m.Groups[1].Value));
+            var g = new Game(Id: id, Red: red, Green: green, Blue: blue);
+            return g;
+        }
+
         public int Part2(string input)
         {
-            return 0;
+            return input.Split(Environment.NewLine)
+                .Select(GetGame)
+                .Sum(g => g.Power);
         }
 
         [GeneratedRegex(@"^Game ([0-9]+):")]
