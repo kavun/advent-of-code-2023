@@ -1,6 +1,6 @@
 # advent-of-code-2023
 
 ```
-cd src/AOCConsole
-dotnet run
+./local.ps1 run
+./local.ps1 test
 ```
