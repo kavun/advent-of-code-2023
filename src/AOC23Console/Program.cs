@@ -1,6 +1,7 @@
 ﻿using AOC23Console;
 using AOC23Console.Day01;
 using AOC23Console.Day02;
+using AOC23Console.Day03;
 using System.Diagnostics;
 
 Console.WriteLine();
@@ -10,6 +11,7 @@ var sw = new Stopwatch();
 foreach (var day in new IDay[] {
     new Day01(),
     new Day02(),
+    new Day03(),
 })
 {
     var input = File.ReadAllText($"{day.GetType().Name}/input.txt");

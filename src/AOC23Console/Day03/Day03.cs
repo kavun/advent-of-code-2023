@@ -1,0 +1,108 @@
+﻿using System.Text;
+
+namespace AOC23Console.Day03
+{
+    public partial class Day03 : IDay
+    {
+        public string Name => "Day 3: Gear Ratios";
+
+        public record Num(string Number, int Start, int End)
+        {
+            public int IntNum => int.Parse(Number);
+        }
+        public int Part1(string input)
+        {
+            var lines = input.Split(Environment.NewLine);
+            var nums = new List<Num>();
+
+            for (var i = 0; i < lines.Length; i++)
+            {
+                var line = lines[i];
+                var num = new StringBuilder();
+                var building = false;
+                var numStart = -1;
+
+                void TryAddNumber(Num potentialNum)
+                {
+                    var valid = false;
+
+                    for (var q = Math.Max(0, potentialNum.Start - 1); q < Math.Min(line.Length, potentialNum.End + 2); q++)
+                    {
+                        if (i > 0)
+                        {
+                            if (lines[i - 1][q] != '.')
+                            {
+                                valid = true;
+                            }
+                        }
+
+                        if (i < lines.Length - 1)
+                        {
+                            if (lines[i + 1][q] != '.')
+                            {
+                                valid = true;
+                            }
+                        }
+                    }
+
+                    if (potentialNum.Start > 0)
+                    {
+                        if (lines[i][potentialNum.Start - 1] != '.')
+                        {
+                            valid = true;
+                        }
+                    }
+
+                    if (potentialNum.End < line.Length - 1)
+                    {
+                        if (lines[i][potentialNum.End + 1] != '.')
+                        {
+                            valid = true;
+                        }
+                    }
+
+                    if (valid)
+                    {
+                        nums.Add(potentialNum);
+                    }
+
+                    building = false;
+                    num.Clear();
+                    numStart = -1;
+                }
+
+                for (var l = 0; l < line.Length; l++)
+                {
+                    var c = line[l];
+                    if (char.IsDigit(c))
+                    {
+                        if (!building)
+                        {
+                            numStart = l;
+                            building = true;
+                        }
+                        num.Append(c);
+                    }
+                    else if (building)
+                    {
+                        var potentialNum = new Num(num.ToString(), numStart, l - 1);
+                        TryAddNumber(potentialNum);
+                    }
+                }
+
+                if (building)
+                {
+                    var potentialNum = new Num(num.ToString(), numStart, line.Length);
+                    TryAddNumber(potentialNum);
+                }
+            }
+
+            return nums.Sum(n => n.IntNum);
+        }
+
+        public int Part2(string input)
+        {
+            return 0;
+        }
+    }
+}
