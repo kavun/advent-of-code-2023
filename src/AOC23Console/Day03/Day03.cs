@@ -6,14 +6,52 @@ namespace AOC23Console.Day03
     {
         public string Name => "Day 3: Gear Ratios";
 
-        public record Num(string Number, int Start, int End)
+        public record Num(string Number, int Start, int End, int Line)
         {
             public int IntNum => int.Parse(Number);
         }
+
+        public record Gear(int Line, int Index);
+
+        public record Result3(List<Num> Nums, List<Gear> Gears);
+
         public int Part1(string input)
         {
+            var result = GetNumsAndGears(input);
+            return result.Nums.Sum(n => n.IntNum);
+        }
+
+        public record GearedNums(Gear Gear, List<Num> Nums) {
+            public bool IsValid => Nums.Count == 2;
+            public int Ratio => IsValid ? Nums[0].IntNum * Nums[1].IntNum : 0;
+        }
+
+        public int Part2(string input)
+        {
+            var result = GetNumsAndGears(input);
+            return result.Gears
+                .Select(g => {
+                    return new GearedNums(g,
+                        result.Nums.Where(n => {
+                            var adjLine = n.Line >= g.Line - 1 && n.Line <= g.Line + 1;
+                            var adjIdx = adjLine && (
+                                n.Start >= g.Index - 1 && n.End <= g.Index + 1  
+                            );
+                            if (adjIdx) {
+                                Console.WriteLine(n);
+                                Console.WriteLine("adj to");
+                                Console.WriteLine(g);
+                            }
+                            return adjIdx;
+                        }).ToList());
+                })
+                .Sum(g => g.Ratio);
+        }
+
+        private Result3 GetNumsAndGears(string input) {
             var lines = input.Split(Environment.NewLine);
             var nums = new List<Num>();
+            var gears = new List<Gear>();
 
             for (var i = 0; i < lines.Length; i++)
             {
@@ -82,27 +120,28 @@ namespace AOC23Console.Day03
                             building = true;
                         }
                         num.Append(c);
+                        continue;
                     }
                     else if (building)
                     {
-                        var potentialNum = new Num(num.ToString(), numStart, l - 1);
+                        var potentialNum = new Num(num.ToString(), numStart, l - 1, i);
                         TryAddNumber(potentialNum);
+                    }
+
+                    if (c == '*')
+                    {
+                        gears.Add(new Gear(i, l));
                     }
                 }
 
                 if (building)
                 {
-                    var potentialNum = new Num(num.ToString(), numStart, line.Length);
+                    var potentialNum = new Num(num.ToString(), numStart, line.Length, i);
                     TryAddNumber(potentialNum);
                 }
             }
 
-            return nums.Sum(n => n.IntNum);
-        }
-
-        public int Part2(string input)
-        {
-            return 0;
+            return new Result3(nums, gears);
         }
     }
 }
