@@ -6,25 +6,11 @@ public partial class Day03 : IDay
 {
     public string Name => "Day 3: Gear Ratios";
 
-    public record Num(string Number, int Start, int End, int Line)
-    {
-        public int IntNum => int.Parse(Number);
-    }
-
-    public record Gear(int Line, int Index);
-
-    public record Result3(List<Num> Nums, List<Gear> Gears);
-
     public int Part1(string input)
     {
         var result = GetNumsAndGears(input);
-        return result.Nums.Sum(n => n.IntNum);
-    }
-
-    public record GearedNums(Gear Gear, List<Num> Nums)
-    {
-        public bool IsValid => Nums.Count == 2;
-        public int Ratio => IsValid ? Nums[0].IntNum * Nums[1].IntNum : 0;
+        return result.Nums
+            .Sum(n => n.IntNum);
     }
 
     public int Part2(string input)
@@ -33,26 +19,40 @@ public partial class Day03 : IDay
         return result.Gears
             .Select(g =>
             {
-                return new GearedNums(g,
-                    result.Nums.Where(n =>
+                return new GearedNums(
+                    Gear: g,
+                    Nums: result.Nums.Where(n =>
                     {
-                        var adjLine = n.Line >= g.Line - 1 && n.Line <= g.Line + 1;
-                        var adjIdx = adjLine && (
-                            n.Start >= g.Index - 1 && n.End <= g.Index + 1
-                        );
-                        if (adjIdx)
-                        {
-                            Console.WriteLine(n);
-                            Console.WriteLine("adj to");
-                            Console.WriteLine(g);
-                        }
-                        return adjIdx;
+                        return g.AdjTo(n);
                     }).ToList());
             })
+            .Where(g => g.IsValid)
             .Sum(g => g.Ratio);
     }
 
-    private static Result3 GetNumsAndGears(string input)
+    public record Num(string Number, int Start, int End, int Line)
+    {
+        public int IntNum => int.Parse(Number);
+    }
+
+    public record Gear(int Line, int Index)
+    {
+        public bool AdjTo(Num num)
+        {
+            return Line >= num.Line - 1 && Line <= num.Line + 1
+                && Index >= num.Start - 1 && Index <= num.End + 1;
+        }
+    };
+
+    public record NumsAndGears(List<Num> Nums, List<Gear> Gears);
+
+    public record GearedNums(Gear Gear, List<Num> Nums)
+    {
+        public bool IsValid => Nums.Count == 2;
+        public int Ratio => IsValid ? Nums[0].IntNum * Nums[1].IntNum : 0;
+    }
+
+    private static NumsAndGears GetNumsAndGears(string input)
     {
         var lines = input.Split(Environment.NewLine);
         var nums = new List<Num>();
@@ -65,7 +65,7 @@ public partial class Day03 : IDay
             var building = false;
             var numStart = -1;
 
-            void TryAddNumber(Num potentialNum)
+            void AddNumber(Num potentialNum)
             {
                 var valid = false;
 
@@ -130,7 +130,7 @@ public partial class Day03 : IDay
                 else if (building)
                 {
                     var potentialNum = new Num(num.ToString(), numStart, l - 1, i);
-                    TryAddNumber(potentialNum);
+                    AddNumber(potentialNum);
                 }
 
                 if (c == '*')
@@ -142,10 +142,10 @@ public partial class Day03 : IDay
             if (building)
             {
                 var potentialNum = new Num(num.ToString(), numStart, line.Length, i);
-                TryAddNumber(potentialNum);
+                AddNumber(potentialNum);
             }
         }
 
-        return new Result3(nums, gears);
+        return new NumsAndGears(nums, gears);
     }
 }
