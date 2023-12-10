@@ -5,19 +5,23 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{47093C2D-16D3-41BC-8EC9-EDDE406B625C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AOC23Console", "src\AOC23Console\AOC23Console.csproj", "{053415A1-6859-47D4-94E1-1FCDDBD0772B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AOC23Console", "src\AOC23Console\AOC23Console.csproj", "{053415A1-6859-47D4-94E1-1FCDDBD0772B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{74954344-E83C-4AB1-BCCE-BA6CFC546825}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AOC23Tests", "tests\AOC23Tests\AOC23Tests.csproj", "{83C823D2-89D5-4F01-903D-953BFD1E1F1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AOC23Tests", "tests\AOC23Tests\AOC23Tests.csproj", "{83C823D2-89D5-4F01-903D-953BFD1E1F1B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{506FEC22-F023-4D64-BEEC-48ED3F144273}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		local.ps1 = local.ps1
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{053415A1-6859-47D4-94E1-1FCDDBD0772B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -28,6 +32,9 @@ Global
 		{83C823D2-89D5-4F01-903D-953BFD1E1F1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83C823D2-89D5-4F01-903D-953BFD1E1F1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83C823D2-89D5-4F01-903D-953BFD1E1F1B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{053415A1-6859-47D4-94E1-1FCDDBD0772B} = {47093C2D-16D3-41BC-8EC9-EDDE406B625C}
