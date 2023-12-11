@@ -3,6 +3,7 @@ using AOC23Console.Day01;
 using AOC23Console.Day02;
 using AOC23Console.Day03;
 using AOC23Console.Day04;
+using AOC23Console.Day05;
 using System.Diagnostics;
 
 Console.WriteLine();
@@ -14,6 +15,7 @@ foreach (var day in new IDay[] {
     new Day02(),
     new Day03(),
     new Day04(),
+    new Day05(),
 })
 {
     var input = File.ReadAllText($"{day.GetType().Name}/input.txt");
