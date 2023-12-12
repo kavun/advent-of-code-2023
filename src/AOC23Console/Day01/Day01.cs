@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 
 namespace AOC23Console.Day01;
 
@@ -6,7 +6,7 @@ public partial class Day01 : IDay
 {
     public string Name => "Day 1: Trebuchet?!";
 
-    public int Part1(string input)
+    public long Part1(string input)
     {
         return input
             .Split(Environment.NewLine)
@@ -24,7 +24,7 @@ public partial class Day01 : IDay
     [GeneratedRegex(@"[1-9]")]
     private static partial Regex NumbersRegex();
 
-    public int Part2(string input)
+    public long Part2(string input)
     {
         return input
             .Split(Environment.NewLine)

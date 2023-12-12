@@ -4,7 +4,7 @@ public partial class Day04 : IDay
 {
     public string Name => "Day 4: Scratchcards";
 
-    public int Part1(string input)
+    public long Part1(string input)
     {
         return input.Split(Environment.NewLine)
             .Sum(line =>
@@ -20,11 +20,12 @@ public partial class Day04 : IDay
             });
     }
 
-    public int Part2(string input)
+    public long Part2(string input)
     {
         var lines = input.Split(Environment.NewLine);
         var extras = new Dictionary<int, int>();
-        for (var lineNum = 0; lineNum < lines.Length; lineNum++) {
+        for (var lineNum = 0; lineNum < lines.Length; lineNum++)
+        {
             extras.Add(lineNum, 1);
         }
 
@@ -39,7 +40,8 @@ public partial class Day04 : IDay
             var winningCount = winningNums.Where(w => haveNums.Contains(w)).Count();
             var nextIdx = l + 1;
             var max = Math.Min(lines.Length, nextIdx + winningCount);
-            for (var e = nextIdx; e < max; e++) {
+            for (var e = nextIdx; e < max; e++)
+            {
                 extras[e] = extras[e] + extras[l];
             }
 

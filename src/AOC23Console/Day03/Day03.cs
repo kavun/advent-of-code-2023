@@ -6,14 +6,14 @@ public partial class Day03 : IDay
 {
     public string Name => "Day 3: Gear Ratios";
 
-    public int Part1(string input)
+    public long Part1(string input)
     {
         var result = GetNumsAndGears(input);
         return result.Nums
             .Sum(n => n.IntNum);
     }
 
-    public int Part2(string input)
+    public long Part2(string input)
     {
         var result = GetNumsAndGears(input);
         return result.Gears

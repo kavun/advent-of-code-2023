@@ -12,7 +12,7 @@ public partial class Day02 : IDay
         public int Power => Red * Green * Blue;
     }
 
-    public int Part1(string input)
+    public long Part1(string input)
     {
         return input.Split(Environment.NewLine)
             .Select(GetGame)
@@ -30,7 +30,7 @@ public partial class Day02 : IDay
         return g;
     }
 
-    public int Part2(string input)
+    public long Part2(string input)
     {
         return input.Split(Environment.NewLine)
             .Select(GetGame)

@@ -1,8 +1,8 @@
-﻿namespace AOC23Console;
+namespace AOC23Console;
 
 public interface IDay
 {
-    int Part1(string input);
-    int Part2(string input);
+    long Part1(string input);
+    long Part2(string input);
     string Name { get; }
 }

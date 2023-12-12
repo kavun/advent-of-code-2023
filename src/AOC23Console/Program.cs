@@ -1,4 +1,4 @@
-﻿using AOC23Console;
+using AOC23Console;
 using AOC23Console.Day01;
 using AOC23Console.Day02;
 using AOC23Console.Day03;
@@ -32,7 +32,7 @@ foreach (var day in new IDay[] {
     Console.WriteLine();
 }
 
-static (int, long) WithTimer(Func<string, int> action, string input)
+static (long, long) WithTimer(Func<string, long> action, string input)
 {
     var sw = new Stopwatch();
     sw.Start();
