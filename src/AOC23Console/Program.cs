@@ -20,23 +20,22 @@ foreach (var day in new IDay[] {
 {
     var input = File.ReadAllText($"{day.GetType().Name}/input.txt");
 
-    var (part1, part1Time) = WithTimer(day.Part1, input);
-    var (part2, part2Time) = WithTimer(day.Part2, input);
+    Console.WriteLine(day.Name);
 
-    Console.WriteLine($"""
-        {day.Name}
-          Part One: {part1} ({part1Time}ms)
-          Part Two: {part2} ({part2Time}ms)
-        """);
+    var (part1, part1Time) = WithTimer(() => day.Part1(input));
+    Console.WriteLine($"  Part One: {part1} ({part1Time}ms)");
+    
+    var (part2, part2Time) = WithTimer(() => day.Part2(input));
+    Console.WriteLine($"  Part Two: {part2} ({part2Time}ms)");
 
     Console.WriteLine();
 }
 
-static (long, long) WithTimer(Func<string, long> action, string input)
+static (long, long) WithTimer(Func<long> action)
 {
     var sw = new Stopwatch();
     sw.Start();
-    var result = action(input);
+    var result = action();
     sw.Stop();
     return (result, sw.ElapsedMilliseconds);
 }

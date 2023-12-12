@@ -16,9 +16,6 @@ public partial class Day05 : IDay
 
         public long Find(long seed)
         {
-            //Console.WriteLine();
-            //Console.WriteLine($"Finding {seed}");
-
             var m = -1;
             foreach (var map in Maps)
             {
@@ -71,29 +68,13 @@ public partial class Day05 : IDay
         {
             var block = match.Groups[1].Value.Trim();
 
-            //Console.WriteLine();
-            //Console.WriteLine(block);
-            //Console.WriteLine();
-
             if (blockIdx == 0)
             {
                 seeds = new HashSet<long>(block.Split(" ").Select(b => long.Parse(b)));
             }
             else
             {
-                var partials = new List<SeedMapPartial>();
-                foreach (var blockLine in block.Split(Environment.NewLine))
-                {
-                    var blockLineParts = blockLine.Split(" ");
-                    var partial = new SeedMapPartial(
-                        DestinationStart: long.Parse(blockLineParts[0]),
-                        SourceStart: long.Parse(blockLineParts[1]),
-                        RangeLength: long.Parse(blockLineParts[2])
-                    );
-                    //Console.WriteLine(partial);
-                    partials.Add(partial);
-                }
-                seedMaps.Add(new SeedMap(partials));
+                seedMaps.Add(GetSeedMap(block));
             }
 
             blockIdx++;
@@ -109,8 +90,70 @@ public partial class Day05 : IDay
         return seedLocations.Min();
     }
 
+    private static SeedMap GetSeedMap(string block)
+    {
+        var partials = new List<SeedMapPartial>();
+        foreach (var blockLine in block.Split(Environment.NewLine))
+        {
+            var blockLineParts = blockLine.Split(" ");
+            var partial = new SeedMapPartial(
+                DestinationStart: long.Parse(blockLineParts[0]),
+                SourceStart: long.Parse(blockLineParts[1]),
+                RangeLength: long.Parse(blockLineParts[2])
+            );
+            partials.Add(partial);
+        }
+        return new SeedMap(partials);
+    }
+
+
     public long Part2(string input)
     {
-        return 0;
+        var matches = Regex.Matches(input, @":([^a-z]+)");
+        var seeds = new HashSet<long>();
+        var seedMaps = new SeedMaps();
+
+        var blockIdx = 0;
+        foreach (var match in matches.ToArray())
+        {
+            var block = match.Groups[1].Value.Trim();
+
+            if (blockIdx == 0)
+            {
+                var seedParts = block.Split(" ");
+                var idx = seedParts.Length - 1;
+                Console.WriteLine(idx);
+                
+                while (idx > 0) {
+                    var start = long.Parse(seedParts[idx - 1]);
+                    var count = long.Parse(seedParts[idx]);
+
+                    Console.WriteLine($"Parsed {start} start and {count} count");
+
+                    while (count > 0) {
+                        count--;
+                        seeds.Add(start + count);
+                    }
+
+                    idx--;
+                    idx--;
+                }
+            }
+            else
+            {
+                seedMaps.Add(GetSeedMap(block));
+            }
+
+            blockIdx++;
+        }
+
+        var seedLocations = new List<long>();
+        foreach (var seed in seeds)
+        {
+            var location = seedMaps.Find(seed);
+            seedLocations.Add(location);
+        }
+
+        return seedLocations.Min();
     }
 }
