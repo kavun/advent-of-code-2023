@@ -6,8 +6,12 @@
 		"vscode": {
 			"extensions": [
 				"ms-dotnettools.csdevkit",
-				"ms-vscode.powershell"
-			]
+				"ms-vscode.powershell",
+				"GitHub.copilot"
+			],
+			"settings": {
+				"workbench.colorTheme": "Default Dark Modern"
+			}
 		}
 	}
 }
