@@ -6,6 +6,11 @@ public partial class Day05 : IDay
 {
     public string Name => "Day 5: If You Give A Seed A Fertilizer";
 
+    public record SeedRange(long Start, long Count)
+    {
+        public long End => Start + Count - 1;
+    }
+
     public record SeedMaps()
     {
         public List<SeedMap> Maps = [];
@@ -33,6 +38,13 @@ public partial class Day05 : IDay
             }
 
             return seed;
+        }
+
+        public List<SeedRange> WalkRanges(List<SeedRange> seedRanges)
+        {
+
+
+            return seedRanges;
         }
     }
 
@@ -110,7 +122,7 @@ public partial class Day05 : IDay
     public long Part2(string input)
     {
         var matches = Regex.Matches(input, @":([^a-z]+)");
-        var seeds = new HashSet<long>();
+        var seedRanges = new List<SeedRange>();
         var seedMaps = new SeedMaps();
 
         var blockIdx = 0;
@@ -122,21 +134,23 @@ public partial class Day05 : IDay
             {
                 var seedParts = block.Split(" ");
                 var idx = seedParts.Length - 1;
-                Console.WriteLine(idx);
-                
-                while (idx > 0) {
+                // Console.WriteLine(idx);
+
+                while (idx > 0)
+                {
                     var start = long.Parse(seedParts[idx - 1]);
                     var count = long.Parse(seedParts[idx]);
 
-                    Console.WriteLine($"Parsed {start} start and {count} count");
+                    // while (count > 0) {
+                    //     count--;
+                    //     seeds.Add(start + count);
+                    // }
 
-                    while (count > 0) {
-                        count--;
-                        seeds.Add(start + count);
-                    }
+                    // can't brute force billions of seeds, build ranges instead
 
-                    idx--;
-                    idx--;
+                    seedRanges.Add(new SeedRange(start, count));
+
+                    idx -= 2;
                 }
             }
             else
@@ -147,13 +161,7 @@ public partial class Day05 : IDay
             blockIdx++;
         }
 
-        var seedLocations = new List<long>();
-        foreach (var seed in seeds)
-        {
-            var location = seedMaps.Find(seed);
-            seedLocations.Add(location);
-        }
-
-        return seedLocations.Min();
+        List<SeedRange> finalRanges = seedMaps.WalkRanges(seedRanges);
+        return finalRanges.MinBy(r => r.Start)!.Start;
     }
 }
