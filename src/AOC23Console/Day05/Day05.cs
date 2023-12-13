@@ -6,14 +6,22 @@ public partial class Day05 : IDay
 {
     public string Name => "Day 5: If You Give A Seed A Fertilizer";
 
-    public record SeedRange(long Start, long Count)
+    public record SeedRange
     {
-        public long End => Start + Count - 1;
+        public SeedRange(long Start, long End)
+        {
+            this.Start = Start;
+            this.End = End;
+        }
+        public long Start {get;set;}
+        public long End {get;set;}
+        public override string ToString() => $"{Start}..{End}";
     }
 
     public record SeedMaps()
     {
         public List<SeedMap> Maps = [];
+        public override string ToString() => string.Join(Environment.NewLine, Maps.Select(m => string.Join(Environment.NewLine, m.Partials.Select(p => $"{p.SourceStart}..{p.SourceEnd} -> {p.DestinationStart}..{p.DestinationEnd}"))));
         public void Add(SeedMap map)
         {
             Maps.Add(map);
@@ -42,113 +50,73 @@ public partial class Day05 : IDay
 
         public List<SeedRange> WalkRanges(List<SeedRange> seedRanges)
         {
-
             foreach (var map in Maps)
             {
-                var newRanges = new List<SeedRange>();
+                var mappedRanges = new List<SeedRange>();
                 foreach (var range in seedRanges)
                 {
-                    /*
-                        given seed range
-                        5..12
+                    // Console.WriteLine("mapping " + range);
 
-                        and maps
-                        6..7 -> 24..25
-                        10..11 -> 2..3
-
-                        the result should be
-                        2..3
-                        5..5
-                        8..9
-                        12..12
-                        24..25
-                    */
-
-                    foreach (var partial in map.Partials)
+                    foreach (var partial in map.Partials.OrderBy(p => p.SourceStart))
                     {
-                        var start = partial.SourceStart;
-                        var end = partial.SourceEnd;
-                        var offset = range.Start - partial.SourceStart;
+                        var offset = partial.DestinationStart - partial.SourceStart;
+                        // Console.WriteLine("using partial " + partial + " with offset " + offset);
 
-                        if (range.Start < start && range.End < start)
+                        if (range.Start < partial.SourceStart)
                         {
-                            // range is before partial
-                            newRanges.Add(range);
-                        }
-                        else if (range.Start > end && range.End > end)
-                        {
-                            // range is after partial
-                            newRanges.Add(range);
-                        }
-                        else if (range.Start >= start && range.End <= end)
-                        {
-                            // range is within partial
+                            /*
+                                range: 2..6
+                                partial: 5..7 -> 10..12
+
+                                mappedRanges: 2..4
+                                range becomes: 5..6
+                            */
                             var newRange = new SeedRange(
-                                Start: partial.DestinationStart + offset,
-                                Count: range.Count // same count
-                            );
-                            newRanges.Add(newRange);
-                        }
-                        else if (range.Start < start && range.End >= start && range.End <= end)
-                        {
-                            // range starts before partial and ends within partial
-                            var rangeBeforePartial = new SeedRange(
                                 Start: range.Start,
-                                Count: partial.DestinationStart - range.Start
+                                End: Math.Min(range.End, partial.SourceStart - 1)
                             );
-                            newRanges.Add(rangeBeforePartial);
-
-                            var rangeWithinPartial = new SeedRange(
-                                Start: partial.DestinationStart,
-                                Count: range.End - partial.SourceStart + 1
-                            );
-                            newRanges.Add(rangeWithinPartial);
+                            mappedRanges.Add(newRange);
+                            range.Start = partial.SourceStart;
+                            // Console.WriteLine("1. added " + newRange + " and updated range to " + range);
+                            // Console.WriteLine(range);
+                            if (range.Start > range.End)
+                            {
+                                break;
+                            }
                         }
-                        else if (range.Start >= start && range.Start <= end && range.End > end)
+
+                        if (range.Start <= partial.SourceEnd)
                         {
-                            // range starts within partial and ends after partial
-                            var rangeWithinPartial = new SeedRange(
-                                Start: partial.DestinationStart + offset,
-                                Count: partial.RangeLength - offset
-                            );
-                            newRanges.Add(rangeWithinPartial);
+                            /*
+                                range: 5..6
+                                partial: 5..7 -> 10..12
 
-                            var rangeAfterPartial = new SeedRange(
-                                Start: partial.SourceEnd + 1,
-                                Count: range.End - partial.SourceEnd
+                                mappedRanges: 10..11
+                                range becomes: 8..6 // start > end, so we're done with map.Partials
+                            */
+                            var newRange = new SeedRange(
+                                Start: range.Start + offset,
+                                End: Math.Min(partial.DestinationEnd, range.End + offset)
                             );
-                            newRanges.Add(rangeAfterPartial);
+                            mappedRanges.Add(newRange);
+                            range.Start = partial.SourceEnd + 1;
+                            // Console.WriteLine("2. added " + newRange + " and updated range to " + range);
+                            if (range.Start > range.End)
+                            {
+                                break;
+                            }
                         }
-                        else if (range.Start < start && range.End > end)
-                        {
-                            // range starts before partial and ends after partial
-                            var rangeBeforePartial = new SeedRange(
-                                Start: range.Start,
-                                Count: partial.DestinationStart - range.Start
-                            );
-                            newRanges.Add(rangeBeforePartial);
+                    }
 
-                            var rangeWithinPartial = new SeedRange(
-                                Start: partial.DestinationStart + offset,
-                                Count: partial.RangeLength - offset
-                            );
-                            newRanges.Add(rangeWithinPartial);
-
-                            var rangeAfterPartial = new SeedRange(
-                                Start: partial.SourceEnd + 1,
-                                Count: range.End - partial.SourceEnd
-                            );
-                            newRanges.Add(rangeAfterPartial);
-                        }
-                        else
-                        {
-                            throw new Exception("Unhandled range case");
-                        }
+                    // if we didn't map the whole range, add the remainder
+                    if (range.Start <= range.End)
+                    {
+                        mappedRanges.Add(range);
+                        // Console.WriteLine("3. added remaining " + range);
                     }
                 }
 
-                seedRanges = newRanges;
-                Console.WriteLine($"Seed ranges after map {seedRanges.Count}");
+                seedRanges = mappedRanges;
             }
 
             return seedRanges;
@@ -169,12 +137,15 @@ public partial class Day05 : IDay
 
             return seed;
         }
+
+        public override string ToString() => string.Join(Environment.NewLine, Partials.Select(p => $"{p.SourceStart}..{p.SourceEnd} -> {p.DestinationStart}..{p.DestinationEnd}"));
     }
 
     public record SeedMapPartial(long DestinationStart, long SourceStart, long RangeLength)
     {
         public long SourceEnd => SourceStart + RangeLength - 1;
         public long DestinationEnd => DestinationStart + RangeLength - 1;
+        public override string ToString() => $"{SourceStart}..{SourceEnd} -> {DestinationStart}..{DestinationEnd}";
     }
 
     public long Part1(string input)
@@ -256,7 +227,9 @@ public partial class Day05 : IDay
 
                     // can't brute force billions of seeds, build ranges instead
 
-                    seedRanges.Add(new SeedRange(start, count));
+                    seedRanges.Add(new SeedRange(
+                        Start: start,
+                        End: start + count - 1));
 
                     idx -= 2;
                 }
@@ -270,6 +243,6 @@ public partial class Day05 : IDay
         }
 
         List<SeedRange> finalRanges = seedMaps.WalkRanges(seedRanges);
-        return finalRanges.MinBy(r => r.Start)!.Start;
+        return finalRanges.Min(r => r.Start);
     }
 }
