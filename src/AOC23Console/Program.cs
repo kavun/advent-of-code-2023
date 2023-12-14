@@ -1,27 +1,21 @@
 using AOC23Console;
-using AOC23Console.Day01;
-using AOC23Console.Day02;
-using AOC23Console.Day03;
-using AOC23Console.Day04;
-using AOC23Console.Day05;
-using AOC23Console.Day06;
 using System.Diagnostics;
 
 Console.WriteLine();
 
 var sw = new Stopwatch();
 
-foreach (var day in new IDay[] {
-    new Day01(),
-    new Day02(),
-    new Day03(),
-    new Day04(),
-    new Day05(),
-    new Day06(),
-}.Where(d => {
-    if (args.Length == 0) return true;
-    return args.Contains(d.Number);
-}))
+var days = typeof(IDay).Assembly.GetTypes()
+    .Where(t => t.GetInterfaces().Contains(typeof(IDay)))
+    .Select(t => (IDay)Activator.CreateInstance(t)!)
+    .OrderBy(d => d.Number)
+    .Where(d =>
+    {
+        if (args.Length == 0) return true;
+        return args.Contains(d.Number);
+    });
+
+foreach (var day in days)
 {
     var input = File.ReadAllText($"{day.GetType().Name}/input.txt");
 
