@@ -18,7 +18,10 @@ foreach (var day in new IDay[] {
     new Day04(),
     new Day05(),
     new Day06(),
-})
+}.Where(d => {
+    if (args.Length == 0) return true;
+    return args.Contains(d.Number);
+}))
 {
     var input = File.ReadAllText($"{day.GetType().Name}/input.txt");
 
@@ -26,7 +29,7 @@ foreach (var day in new IDay[] {
 
     var (part1, part1Time) = WithTimer(() => day.Part1(input));
     Console.WriteLine($"  Part One: {part1} ({part1Time}ms)");
-    
+
     var (part2, part2Time) = WithTimer(() => day.Part2(input));
     Console.WriteLine($"  Part Two: {part2} ({part2Time}ms)");
 

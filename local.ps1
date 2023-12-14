@@ -5,12 +5,15 @@ param(
         "build",
         "test"
     )]
-    [string]$Command
+    [string]$Command,
+
+    [Parameter(Position=1, ValueFromRemainingArguments=$true)]
+    $Rest
 )
 
 function Invoke-Run {
     Push-Location $PSScriptRoot/src/AOC23Console
-    & dotnet run
+    Invoke-Expression "dotnet run -- $Rest"
     Pop-Location
 }
 

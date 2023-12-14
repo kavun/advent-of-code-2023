@@ -4,7 +4,8 @@ namespace AOC23Console.Day05;
 
 public partial class Day05 : IDay
 {
-    public string Name => "Day 5: If You Give A Seed A Fertilizer";
+    public string Number => "05";
+    public string Name => $"Day {Number}: If You Give A Seed A Fertilizer";
 
     public record SeedRange
     {

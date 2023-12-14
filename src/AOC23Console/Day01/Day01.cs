@@ -4,7 +4,8 @@ namespace AOC23Console.Day01;
 
 public partial class Day01 : IDay
 {
-    public string Name => "Day 1: Trebuchet?!";
+    public string Number => "01";
+    public string Name => $"Day {Number}: Trebuchet?!";
 
     public long Part1(string input)
     {

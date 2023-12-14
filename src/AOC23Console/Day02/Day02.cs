@@ -4,7 +4,8 @@ namespace AOC23Console.Day02;
 
 public partial class Day02 : IDay
 {
-    public string Name => "Day 2: Cube Conundrum";
+    public string Number => "02";
+    public string Name => $"Day {Number}: Cube Conundrum";
 
     public record Game(int Id, int Red, int Green, int Blue)
     {

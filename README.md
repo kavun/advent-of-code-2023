@@ -1,8 +1,14 @@
 # advent-of-code-2023
 
-```
+```powershell
 ./local.ps1 run
 ./local.ps1 test
+```
+
+To only run specific day(s) pass them as arguments:
+
+```powershell
+./local.ps1 run 05 06
 ```
 
 ## Notes
