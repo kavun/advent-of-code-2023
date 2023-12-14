@@ -16,8 +16,9 @@ public class Day06Tests
     [Fact]
     public void Part2()
     {
-        Assert.Equal(0, new Day06().Part2("""
-            
+        Assert.Equal(71503, new Day06().Part2("""
+            Time:      7  15   30
+            Distance:  9  40  200
             """));
     }
 }
