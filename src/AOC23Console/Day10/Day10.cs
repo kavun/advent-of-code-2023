@@ -23,10 +23,7 @@ public partial class Day10 : IDay
         public Node NavWith(Node[][] grid) => grid[Y][X];
     };
 
-    public record Node(Loc[] Connections, bool IsStart)
-    {
-
-    };
+    public record Node(Loc id, Loc[] Connections, bool IsStart);
 
     public long Part1(string input)
     {
@@ -38,6 +35,7 @@ public partial class Day10 : IDay
         {
             var loc = new Loc(x, y);
             var node = new Node(
+                id: loc,
                 Connections: Navs.ContainsKey(c) ? Navs[c](loc) : [],
                 IsStart: c == 'S');
 
@@ -53,11 +51,30 @@ public partial class Day10 : IDay
         }).ToArray()).ToArray();
 
         var start = grid[startY][startX];
+        var pending = new List<Node> { start };
+        var seen = new HashSet<Loc>();
 
         var crossed = false;
         while (!crossed)
         {
+            var next = start.Connections
+                .Where(c => c.CanNavWith(grid))
+                .Select(c => c.NavWith(grid))
+                .Where(n => n.id != start.id)
+                .ToList();
 
+            if (next.All(n => seen.Contains(n.id)))
+            {
+                crossed = true;
+            }
+            else
+            {
+                foreach (var n in next)
+                {
+                    seen.Add(n.id);
+                }
+                pending = next;
+            }
         }
 
 
