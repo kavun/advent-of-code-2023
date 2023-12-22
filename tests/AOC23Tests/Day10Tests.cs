@@ -14,6 +14,14 @@ public class Day10Tests
             .L-J.
             .....
             """));
+
+        Assert.Equal(8, new Day10().Part1("""
+            ..F7.
+            .FJ|.
+            SJ.L7
+            |F--J
+            LJ...
+            """));
     }
 
     [Fact]
