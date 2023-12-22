@@ -25,11 +25,30 @@ public partial class Day10 : IDay
         public override string ToString() => $"({X}, {Y})";
     };
 
-    public record Node(Loc Self, Loc[] Connections, bool IsStart, bool IsPipe);
+    public record Node(char Char, Loc Self, Loc[] Connections, bool IsStart, bool IsPipe, bool IsEnclosed = false)
+    {
+        public char BoxChar => IsEnclosed ? '▓' : Char switch
+        {
+            'F' => '┌',
+            '7' => '┐',
+            'L' => '└',
+            'J' => '┘',
+            'S' => '⭐',
+            '-' => '─',
+            '|' => '│',
+            _ => Char
+        };
+    }
 
     public long Part1(string input)
     {
-        var nodes = new Dictionary<Loc, Node>();
+        var (startX, startY, grid) = GetGrid(input);
+        var seen = GetPath(startX, startY, grid);
+        return (long)Math.Floor(seen.Count / 2m);
+    }
+
+    public (int startX, int startY, Node[][] grid) GetGrid(string input)
+    {
         var lines = input.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
         var startX = -1;
         var startY = -1;
@@ -39,6 +58,7 @@ public partial class Day10 : IDay
                 {
                     var loc = new Loc(x, y);
                     var node = new Node(
+                        Char: c,
                         Self: loc,
                         Connections: CharNav.ContainsKey(c) ? CharNav[c](loc) : [],
                         IsStart: c == 'S',
@@ -58,6 +78,11 @@ public partial class Day10 : IDay
             )
             .ToArray();
 
+        return (startX, startY, grid);
+    }
+
+    public HashSet<Loc> GetPath(int startX, int startY, Node[][] grid)
+    {
         // Console.WriteLine();
         // Console.WriteLine($"Start: {startX} {startY}");
         // Console.WriteLine();
@@ -95,11 +120,76 @@ public partial class Day10 : IDay
             }
         }
 
-        return (long)Math.Floor(seen.Count / 2m);
+        return seen;
     }
 
     public long Part2(string input)
     {
-        return 0;
+        var (startX, startY, grid) = GetGrid(input);
+        var seen = GetPath(startX, startY, grid);
+
+        Console.WriteLine($"Start: {startX} {startY}");
+        Console.WriteLine();
+
+        var enclosed = 0;
+        var y = 0;
+        char? firstChar = default;
+        foreach (var row in grid)
+        {
+            var x = 0;
+            var enclosing = false;
+            foreach (var node in row)
+            {
+                var partOfPipe = false;
+                if (seen.Contains(node.Self))
+                {
+                    partOfPipe = true;
+
+                    if (node.Char == '|')
+                    {
+                        // we're crossing into or out of an enclosure
+                        enclosing = !enclosing;
+                    }
+                    else if ("FL".Contains(node.Char))
+                    {
+                        // the next char after this one will not be open
+                        // but we keep track of this first one to determine
+                        // if the following chars are opening or closing the enclosure
+                        firstChar = node.Char;
+                    }
+                    else if (node.Char == 'J')
+                    {
+                        if (firstChar == 'F')
+                        {
+                            // we're either ending or starting an enclosure
+                            enclosing = !enclosing;
+                        }
+                        firstChar = null;
+                    }
+                    else if (node.Char == '7')
+                    {
+                        if (firstChar == 'L')
+                        {
+                            // we're either ending or starting an enclosure
+                            enclosing = !enclosing;
+                        }
+                        firstChar = null;
+                    }
+                }
+                else if (enclosing)
+                {
+                    enclosed++;
+                    grid[y][x] = new Node(node.Char, node.Self, node.Connections, node.IsStart, node.IsPipe, IsEnclosed: true);
+                }
+
+                var c = grid[y][x];
+                Console.Write(c.IsEnclosed || (c.IsPipe && partOfPipe) ? c.BoxChar : c.IsPipe ? '░' : ' ');
+                x++;
+            }
+            Console.WriteLine();
+            y++;
+        }
+
+        return enclosed;
     }
 }
