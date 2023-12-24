@@ -18,17 +18,24 @@ public partial class Day11 : IDay
     {
         var cosmos = BuildCosmos(input);
 
-        PrintCosmos(cosmos);
+        // PrintCosmos(cosmos);
 
         cosmos = ExpandCosmos(cosmos);
 
         var pairs = GetGalaxyPairs(cosmos);
 
-        var pathLengths = pairs.Select(p => Math.Sqrt(Math.Pow(p.A.X - p.B.X, 2) + Math.Pow(p.A.Y - p.B.Y, 2))).ToList();
+        var pathLengths = pairs.Select(CalculateLengthBetweenPair).ToList();
 
-        PrintCosmos(cosmos);
+        // PrintCosmos(cosmos);
 
-        return 0;
+        return pathLengths.Sum();
+    }
+
+    private static int CalculateLengthBetweenPair(SpacePair p, int i)
+    {
+        var length = Math.Abs(p.B.Y - p.A.Y) + Math.Abs(p.B.X - p.A.X);
+        // Console.WriteLine($"{i}: {p.A} -> {p.B} = {length}");
+        return length;
     }
 
     private static HashSet<SpacePair> GetGalaxyPairs(List<List<Space>> cosmos)
@@ -72,6 +79,8 @@ public partial class Day11 : IDay
             yCount++;
         }
 
+        cosmos = RebuildCoordinates(cosmos);
+
         // 2. expand horizontal
         var xCount = 0;
         foreach (var x in cosmos.First().Where((s, x) => cosmos.All(y => y[x].IsEmpty)).Select(s => s.X).ToArray())
@@ -83,6 +92,14 @@ public partial class Day11 : IDay
             xCount++;
         }
 
+        cosmos = RebuildCoordinates(cosmos);
+
+        return cosmos;
+    }
+
+    private static List<List<Space>> RebuildCoordinates(List<List<Space>> cosmos)
+    {
+        cosmos = cosmos.Select((y, yi) => y.Select((x, xi) => new Space(x.Char, xi, yi)).ToList()).ToList();
         return cosmos;
     }
 
