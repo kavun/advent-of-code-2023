@@ -128,12 +128,12 @@ public partial class Day10 : IDay
         var (startX, startY, grid) = GetGrid(input);
         var seen = GetPath(startX, startY, grid);
 
-        Console.WriteLine($"Start: {startX} {startY}");
+        // Console.WriteLine($"Start: {startX} {startY}");
         Console.WriteLine();
 
         var enclosed = 0;
         var y = 0;
-        // char? firstChar = default;
+        char? firstChar = default;
         foreach (var row in grid)
         {
             var x = 0;
@@ -146,42 +146,42 @@ public partial class Day10 : IDay
                     partOfPipe = true;
 
                     // https://github.com/fguchelaar/AdventOfCode2023/blob/efe911b568945729cb41e9ef93d57332a97a1c3c/day-10/Puzzle.cs#L65-L68
-                    if (node.Char == '|' || node.Char == 'F' || node.Char == '7')
-                    {
-                        enclosing = !enclosing;
-                    }
-
-                    // https://www.reddit.com/r/adventofcode/comments/18evyu9/comment/keaz25j/?utm_source=share&utm_medium=web2x&context=3
-                    // if (node.Char == '|')
+                    // if (node.Char == '|' || node.Char == 'F' || node.Char == '7')
                     // {
-                    //     // we're crossing into or out of an enclosure
                     //     enclosing = !enclosing;
                     // }
-                    // else if ("FL".Contains(node.Char))
-                    // {
-                    //     // the next char after this one will not be open
-                    //     // but we keep track of this first one to determine
-                    //     // if the following chars are opening or closing the enclosure
-                    //     firstChar = node.Char;
-                    // }
-                    // else if (node.Char == 'J')
-                    // {
-                    //     if (firstChar == 'F')
-                    //     {
-                    //         // we're either ending or starting an enclosure
-                    //         enclosing = !enclosing;
-                    //     }
-                    //     firstChar = null;
-                    // }
-                    // else if (node.Char == '7')
-                    // {
-                    //     if (firstChar == 'L')
-                    //     {
-                    //         // we're either ending or starting an enclosure
-                    //         enclosing = !enclosing;
-                    //     }
-                    //     firstChar = null;
-                    // }
+
+                    // https://www.reddit.com/r/adventofcode/comments/18evyu9/comment/keaz25j/?utm_source=share&utm_medium=web2x&context=3
+                    if (node.Char == '|')
+                    {
+                        // we're crossing into or out of an enclosure
+                        enclosing = !enclosing;
+                    }
+                    else if ("FL".Contains(node.Char))
+                    {
+                        // the next char after this one will not be open
+                        // but we keep track of this first one to determine
+                        // if the following chars are opening or closing the enclosure
+                        firstChar = node.Char;
+                    }
+                    else if (node.Char == 'J')
+                    {
+                        if (firstChar == 'F')
+                        {
+                            // we're either ending or starting an enclosure
+                            enclosing = !enclosing;
+                        }
+                        firstChar = null;
+                    }
+                    else if (node.Char == '7')
+                    {
+                        if (firstChar == 'L')
+                        {
+                            // we're either ending or starting an enclosure
+                            enclosing = !enclosing;
+                        }
+                        firstChar = null;
+                    }
                 }
                 else if (enclosing)
                 {
